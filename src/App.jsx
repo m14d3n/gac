@@ -124,6 +124,7 @@ export default function App() {
   const [libError, setLibError] = useState(null);
 
   const styles = THEMES[theme];
+  const appIconSrc = `${import.meta.env.BASE_URL}favicon.svg`;
 
   // Settings
   const [settings, setSettings] = useState({
@@ -434,7 +435,7 @@ export default function App() {
               className={`text-3xl font-bold flex items-center justify-center gap-3 sm:justify-start ${styles.title}`}
             >
               <img
-                src="/favicon.svg"
+                src={appIconSrc}
                 alt="GAC logo"
                 className="h-11 w-11 rounded-2xl shadow-lg shadow-cyan-950/40 ring-1 ring-white/10"
               />
