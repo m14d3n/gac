@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Upload,
   Download,
@@ -7,9 +7,111 @@ import {
   CheckCircle,
   AlertCircle,
   RefreshCw,
+  SunMedium,
+  Moon,
 } from "lucide-react";
 
+const THEME_STORAGE_KEY = "gac-theme";
+
+const THEMES = {
+  black: {
+    app: "bg-neutral-950 text-neutral-100",
+    title: "text-white",
+    subtitle: "text-neutral-300",
+    toggleShell: "border border-neutral-700 bg-neutral-900 shadow-lg shadow-black/30",
+    toggleButton: "text-neutral-300 hover:text-white",
+    toggleButtonActive: "bg-white text-black shadow-sm",
+    uploadBox:
+      "bg-neutral-900 border-neutral-500 hover:border-cyan-300 text-center relative group shadow-xl shadow-black/25",
+    uploadIcon: "text-neutral-300 group-hover:text-cyan-300",
+    uploadTitle: "text-neutral-50",
+    uploadText: "text-neutral-300",
+    panel: "bg-neutral-900 border border-neutral-700 shadow-2xl shadow-black/35",
+    panelTitle: "text-white",
+    panelIcon: "text-cyan-300",
+    label: "text-neutral-200",
+    value: "text-neutral-300",
+    helper: "text-neutral-400",
+    range: "bg-neutral-600 accent-cyan-400",
+    input:
+      "bg-neutral-950 border border-neutral-600 text-neutral-100 focus:ring-cyan-400 focus:border-cyan-400",
+    button:
+      "bg-cyan-400 hover:bg-cyan-300 disabled:bg-neutral-800 disabled:text-neutral-400 text-black shadow-lg shadow-cyan-950/35",
+    previewCard: "bg-neutral-900 border border-neutral-700 shadow-2xl shadow-black/30",
+    previewTitle: "text-neutral-100",
+    previewBadge: "bg-neutral-800 text-neutral-200 border border-neutral-700",
+    previewBadgeSuccess: "bg-emerald-500/15 text-emerald-300",
+    previewBadgeWarning: "bg-rose-500/15 text-rose-300",
+    previewStage: "bg-neutral-950 border border-neutral-700",
+    empty: "text-neutral-400",
+    processing: "text-neutral-300",
+    successCallout:
+      "text-emerald-300 bg-emerald-500/10 border border-emerald-500/30",
+    warningCallout:
+      "text-amber-300 bg-amber-500/10 border border-amber-500/30",
+    errorCallout:
+      "text-rose-300 bg-rose-500/10 border border-rose-500/30",
+    downloadButton:
+      "bg-emerald-400 hover:bg-emerald-300 text-black shadow-lg shadow-emerald-950/35",
+  },
+  white: {
+    app: "bg-neutral-50 text-neutral-900",
+    title: "text-neutral-950",
+    subtitle: "text-neutral-600",
+    toggleShell: "border border-neutral-300 bg-white/90 shadow-sm",
+    toggleButton: "text-neutral-500 hover:text-neutral-950",
+    toggleButtonActive: "bg-neutral-950 text-white shadow-sm",
+    uploadBox:
+      "bg-white border-neutral-300 hover:border-neutral-950 text-center relative group shadow-sm",
+    uploadIcon: "text-neutral-500 group-hover:text-neutral-950",
+    uploadTitle: "text-neutral-900",
+    uploadText: "text-neutral-600",
+    panel: "bg-white border border-neutral-200 shadow-xl shadow-neutral-200/80",
+    panelTitle: "text-neutral-950",
+    panelIcon: "text-neutral-950",
+    label: "text-neutral-800",
+    value: "text-neutral-600",
+    helper: "text-neutral-500",
+    range: "bg-neutral-200 accent-neutral-950",
+    input:
+      "bg-white border border-neutral-300 text-neutral-900 focus:ring-neutral-950 focus:border-neutral-950",
+    button:
+      "bg-neutral-950 hover:bg-black disabled:bg-neutral-200 disabled:text-neutral-500 text-white shadow-lg shadow-neutral-300/80",
+    previewCard: "bg-white border border-neutral-200 shadow-xl shadow-neutral-200/70",
+    previewTitle: "text-neutral-800",
+    previewBadge: "bg-neutral-100 text-neutral-700",
+    previewBadgeSuccess: "bg-emerald-100 text-emerald-700",
+    previewBadgeWarning: "bg-rose-100 text-rose-700",
+    previewStage: "bg-neutral-50 border border-neutral-200",
+    empty: "text-neutral-400",
+    processing: "text-neutral-600",
+    successCallout:
+      "text-emerald-700 bg-emerald-50 border border-emerald-200",
+    warningCallout:
+      "text-amber-700 bg-amber-50 border border-amber-200",
+    errorCallout: "text-rose-700 bg-rose-50 border border-rose-200",
+    downloadButton:
+      "bg-emerald-600 hover:bg-emerald-700 text-white shadow-lg shadow-emerald-200",
+  },
+};
+
+function getInitialTheme() {
+  if (typeof window === "undefined") {
+    return "black";
+  }
+
+  const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+  if (savedTheme === "white" || savedTheme === "black") {
+    return savedTheme;
+  }
+
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "black"
+    : "white";
+}
+
 export default function App() {
+  const [theme, setTheme] = useState(getInitialTheme);
   const [file, setFile] = useState(null);
   const [originalUrl, setOriginalUrl] = useState(null);
   const [originalSize, setOriginalSize] = useState(0);
@@ -20,6 +122,8 @@ export default function App() {
   const [progress, setProgress] = useState(0);
   const [scriptsLoaded, setScriptsLoaded] = useState(false);
   const [libError, setLibError] = useState(null);
+
+  const styles = THEMES[theme];
 
   // Settings
   const [settings, setSettings] = useState({
@@ -102,6 +206,13 @@ export default function App() {
 
     initLibs();
   }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme =
+      theme === "black" ? "dark" : "light";
+    window.localStorage.setItem(THEME_STORAGE_KEY, theme);
+  }, [theme]);
 
   const handleFileChange = (e) => {
     const selected = e.target.files[0];
@@ -314,51 +425,84 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-200 p-6 font-sans">
+    <div className={`min-h-screen p-6 font-sans transition-colors ${styles.app}`}>
       <div className="max-w-4xl mx-auto space-y-8">
         {/* Header */}
-        <div className="text-center">
-          <h1 className="text-3xl font-bold text-white flex items-center justify-center gap-2">
-            <RefreshCw className="w-8 h-8 text-blue-400" />
-            GIF Animation Compressor - GAC v 1.0.0.
-          </h1>
-          <p className="text-slate-400 mt-2">
-            Reduce your GIF animation file size directly in your browser.
-          </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div className="text-center sm:text-left">
+            <h1
+              className={`text-3xl font-bold flex items-center justify-center gap-3 sm:justify-start ${styles.title}`}
+            >
+              <img
+                src="/favicon.svg"
+                alt="GAC logo"
+                className="h-11 w-11 rounded-2xl shadow-lg shadow-cyan-950/40 ring-1 ring-white/10"
+              />
+              GAC - GIF Animation Compressor v1.0.0
+            </h1>
+            <p className={`mt-2 ${styles.subtitle}`}>
+              Reduce your GIF animation file size directly in your browser.
+            </p>
+          </div>
+
+          <div className="flex justify-center sm:justify-end">
+            <div className={`inline-flex rounded-full p-1 ${styles.toggleShell}`}>
+              <button
+                type="button"
+                onClick={() => setTheme("white")}
+                className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-colors ${theme === "white" ? styles.toggleButtonActive : styles.toggleButton}`}
+                aria-pressed={theme === "white"}
+              >
+                <SunMedium className="h-4 w-4" />
+                White
+              </button>
+              <button
+                type="button"
+                onClick={() => setTheme("black")}
+                className={`inline-flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition-colors ${theme === "black" ? styles.toggleButtonActive : styles.toggleButton}`}
+                aria-pressed={theme === "black"}
+              >
+                <Moon className="h-4 w-4" />
+                Black
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left Column: Upload & Settings */}
           <div className="lg:col-span-1 space-y-6">
             {/* Upload Box */}
-            <div className="bg-slate-800 p-6 rounded-xl border-2 border-dashed border-slate-600 hover:border-blue-400 transition-colors text-center relative group">
+            <div
+              className={`p-6 rounded-xl border-2 border-dashed transition-colors ${styles.uploadBox}`}
+            >
               <input
                 type="file"
                 accept="image/gif"
                 onChange={handleFileChange}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
               />
-              <Upload className="w-10 h-10 mx-auto text-slate-400 group-hover:text-blue-400 mb-3" />
-              <h3 className="font-semibold text-slate-200">Upload GIF</h3>
-              <p className="text-sm text-slate-400 mt-1">
+              <Upload className={`w-10 h-10 mx-auto mb-3 ${styles.uploadIcon}`} />
+              <h3 className={`font-semibold ${styles.uploadTitle}`}>Upload GIF</h3>
+              <p className={`text-sm mt-1 ${styles.uploadText}`}>
                 Drag & drop or click to select
               </p>
             </div>
 
             {/* Settings Panel */}
-            <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 shadow-lg">
-              <h3 className="font-semibold text-white flex items-center gap-2 mb-4">
-                <Settings className="w-5 h-5 text-blue-400" />
+            <div className={`p-6 rounded-xl ${styles.panel}`}>
+              <h3 className={`font-semibold flex items-center gap-2 mb-4 ${styles.panelTitle}`}>
+                <Settings className={`w-5 h-5 ${styles.panelIcon}`} />
                 Compression Settings
               </h3>
 
               <div className="space-y-5">
                 <div>
                   <div className="flex justify-between mb-1">
-                    <label className="text-sm font-medium text-slate-300">
+                    <label className={`text-sm font-medium ${styles.label}`}>
                       Resolution Scale
                     </label>
-                    <span className="text-sm text-slate-400">
+                    <span className={`text-sm ${styles.value}`}>
                       {Math.round(settings.scale * 100)}%
                     </span>
                   </div>
@@ -374,15 +518,15 @@ export default function App() {
                         scale: parseFloat(e.target.value),
                       })
                     }
-                    className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-500"
+                    className={`w-full h-2 rounded-lg appearance-none cursor-pointer ${styles.range}`}
                   />
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className={`text-xs mt-1 ${styles.helper}`}>
                     Shrinking dimensions saves the most space.
                   </p>
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-slate-300 block mb-2">
+                  <label className={`text-sm font-medium block mb-2 ${styles.label}`}>
                     Frame Drop
                   </label>
                   <select
@@ -393,7 +537,7 @@ export default function App() {
                         frameSkip: parseInt(e.target.value),
                       })
                     }
-                    className="w-full bg-slate-900 border border-slate-600 text-sm rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500 block"
+                    className={`w-full text-sm rounded-lg p-2.5 block ${styles.input}`}
                   >
                     <option value={1}>Keep all frames (Smoothest)</option>
                     <option value={2}>Keep half (Drop every other)</option>
@@ -403,7 +547,7 @@ export default function App() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-medium text-slate-300 block mb-2">
+                  <label className={`text-sm font-medium block mb-2 ${styles.label}`}>
                     Color Palette
                   </label>
                   <select
@@ -414,7 +558,7 @@ export default function App() {
                         colors: parseInt(e.target.value),
                       })
                     }
-                    className="w-full bg-slate-900 border border-slate-600 text-sm rounded-lg p-2.5 focus:ring-blue-500 focus:border-blue-500 block"
+                    className={`w-full text-sm rounded-lg p-2.5 block ${styles.input}`}
                   >
                     <option value={256}>256 Colors (Standard)</option>
                     <option value={128}>128 Colors</option>
@@ -427,7 +571,7 @@ export default function App() {
               </div>
 
               {libError && (
-                <div className="mt-4 flex items-start gap-2 text-sm text-rose-400 bg-rose-900/20 p-3 rounded border border-rose-800/50">
+                <div className={`mt-4 flex items-start gap-2 text-sm p-3 rounded ${styles.errorCallout}`}>
                   <AlertCircle className="w-5 h-5 flex-shrink-0" />
                   <p>{libError}</p>
                 </div>
@@ -436,7 +580,7 @@ export default function App() {
               <button
                 onClick={compressGIF}
                 disabled={!file || isProcessing || !scriptsLoaded || !!libError}
-                className="w-full mt-6 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-700 disabled:cursor-not-allowed text-white font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-lg shadow-blue-900/20"
+                className={`w-full mt-6 disabled:cursor-not-allowed font-semibold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 ${styles.button}`}
               >
                 {isProcessing ? (
                   <>
@@ -472,16 +616,18 @@ export default function App() {
           <div className="lg:col-span-2 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
               {/* Original Preview */}
-              <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col h-full min-h-[300px]">
-                <h3 className="font-semibold text-slate-300 mb-2 flex justify-between items-center">
+              <div className={`p-4 rounded-xl flex flex-col h-full min-h-[300px] ${styles.previewCard}`}>
+                <h3 className={`font-semibold mb-2 flex justify-between items-center ${styles.previewTitle}`}>
                   Original
                   {originalSize > 0 && (
-                    <span className="text-xs bg-slate-700 px-2 py-1 rounded text-slate-300">
+                    <span className={`text-xs px-2 py-1 rounded ${styles.previewBadge}`}>
                       {formatBytes(originalSize)}
                     </span>
                   )}
                 </h3>
-                <div className="flex-1 bg-slate-900 rounded-lg border border-slate-700 flex items-center justify-center overflow-hidden p-2">
+                <div
+                  className={`flex-1 rounded-lg flex items-center justify-center overflow-hidden p-2 ${styles.previewStage}`}
+                >
                   {originalUrl ? (
                     <img
                       src={originalUrl}
@@ -489,24 +635,26 @@ export default function App() {
                       className="max-w-full max-h-[350px] object-contain"
                     />
                   ) : (
-                    <p className="text-slate-600 text-sm">No image uploaded</p>
+                    <p className={`text-sm ${styles.empty}`}>No image uploaded</p>
                   )}
                 </div>
               </div>
 
               {/* Compressed Preview */}
-              <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 flex flex-col h-full min-h-[300px]">
-                <h3 className="font-semibold text-slate-300 mb-2 flex justify-between items-center">
+              <div className={`p-4 rounded-xl flex flex-col h-full min-h-[300px] ${styles.previewCard}`}>
+                <h3 className={`font-semibold mb-2 flex justify-between items-center ${styles.previewTitle}`}>
                   Compressed Result
                   {compressedSize > 0 && (
                     <span
-                      className={`text-xs px-2 py-1 rounded font-medium ${compressedSize <= 256000 ? "bg-emerald-900/50 text-emerald-400" : "bg-rose-900/50 text-rose-400"}`}
+                      className={`text-xs px-2 py-1 rounded font-medium ${compressedSize <= 256000 ? styles.previewBadgeSuccess : styles.previewBadgeWarning}`}
                     >
                       {formatBytes(compressedSize)}
                     </span>
                   )}
                 </h3>
-                <div className="flex-1 bg-slate-900 rounded-lg border border-slate-700 flex items-center justify-center overflow-hidden p-2 relative">
+                <div
+                  className={`flex-1 rounded-lg flex items-center justify-center overflow-hidden p-2 relative ${styles.previewStage}`}
+                >
                   {compressedUrl ? (
                     <img
                       src={compressedUrl}
@@ -516,10 +664,12 @@ export default function App() {
                   ) : isProcessing ? (
                     <div className="text-center">
                       <RefreshCw className="w-8 h-8 animate-spin text-blue-500 mx-auto mb-2" />
-                      <p className="text-slate-400 text-sm">Working magic...</p>
+                      <p className={`text-sm ${styles.processing}`}>
+                        Working magic...
+                      </p>
                     </div>
                   ) : (
-                    <p className="text-slate-600 text-sm">
+                    <p className={`text-sm ${styles.empty}`}>
                       Waiting to compress...
                     </p>
                   )}
@@ -529,12 +679,12 @@ export default function App() {
                 {compressedSize > 0 && (
                   <div className="mt-4 space-y-3">
                     {compressedSize <= 256000 ? (
-                      <div className="flex items-center gap-2 text-sm text-emerald-400 bg-emerald-900/20 p-2 rounded border border-emerald-800/50">
+                      <div className={`flex items-center gap-2 text-sm p-2 rounded ${styles.successCallout}`}>
                         <CheckCircle className="w-4 h-4" /> Success! It's under
                         256 KB.
                       </div>
                     ) : (
-                      <div className="flex items-center gap-2 text-sm text-amber-400 bg-amber-900/20 p-2 rounded border border-amber-800/50">
+                      <div className={`flex items-center gap-2 text-sm p-2 rounded ${styles.warningCallout}`}>
                         <AlertCircle className="w-4 h-4" /> Still over 256 KB.
                         Try lower resolution or dropping more frames.
                       </div>
@@ -543,7 +693,7 @@ export default function App() {
                     <a
                       href={compressedUrl}
                       download="compressed_animation.gif"
-                      className="w-full block text-center bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-lg shadow-emerald-900/20"
+                      className={`w-full block text-center font-semibold py-2.5 px-4 rounded-lg transition-colors flex items-center justify-center gap-2 ${styles.downloadButton}`}
                     >
                       <Download className="w-4 h-4" />
                       Download Final GIF
