@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+	<defs>
+		<linearGradient id="gac-bg" x1="14" y1="10" x2="53" y2="54" gradientUnits="userSpaceOnUse">
+			<stop stop-color="#1E293B" />
+			<stop offset="1" stop-color="#0F172A" />
+		</linearGradient>
+		<linearGradient id="gac-screen" x1="18" y1="18" x2="46" y2="46" gradientUnits="userSpaceOnUse">
+			<stop stop-color="#38BDF8" />
+			<stop offset="1" stop-color="#0EA5E9" />
+		</linearGradient>
+		<linearGradient id="gac-frame-1" x1="12" y1="8" x2="42" y2="40" gradientUnits="userSpaceOnUse">
+			<stop stop-color="#67E8F9" stop-opacity="0.6" />
+			<stop offset="1" stop-color="#67E8F9" stop-opacity="0.15" />
+		</linearGradient>
+		<linearGradient id="gac-frame-2" x1="18" y1="4" x2="48" y2="36" gradientUnits="userSpaceOnUse">
+			<stop stop-color="#F59E0B" stop-opacity="0.7" />
+			<stop offset="1" stop-color="#F97316" stop-opacity="0.2" />
+		</linearGradient>
+	</defs>
+
+	<rect x="18" y="8" width="34" height="40" rx="10" stroke="url(#gac-frame-2)" stroke-width="3" />
+	<rect x="12" y="12" width="34" height="40" rx="10" stroke="url(#gac-frame-1)" stroke-width="3" />
+	<rect x="8" y="16" width="40" height="32" rx="10" fill="url(#gac-bg)" />
+	<rect x="8" y="16" width="40" height="32" rx="10" stroke="#334155" stroke-width="2" />
+
+	<rect x="14" y="22" width="28" height="20" rx="6" fill="url(#gac-screen)" />
+
+	<rect x="11" y="22" width="2" height="4" rx="1" fill="#94A3B8" />
+	<rect x="11" y="30" width="2" height="4" rx="1" fill="#94A3B8" />
+	<rect x="11" y="38" width="2" height="4" rx="1" fill="#94A3B8" />
+	<rect x="43" y="22" width="2" height="4" rx="1" fill="#94A3B8" />
+	<rect x="43" y="30" width="2" height="4" rx="1" fill="#94A3B8" />
+	<rect x="43" y="38" width="2" height="4" rx="1" fill="#94A3B8" />
+
+	<path d="M25 26L19 32L25 38" stroke="#F8FAFC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+	<path d="M31 26L37 32L31 38" stroke="#F8FAFC" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+	<rect x="27" y="27" width="2" height="10" rx="1" fill="#F8FAFC" opacity="0.95" />
+
+	<circle cx="48" cy="18" r="7" fill="#F97316" />
+	<path d="M45 18H51" stroke="#FFF7ED" stroke-width="2.5" stroke-linecap="round" />
+	<path d="M48 15V21" stroke="#FFF7ED" stroke-width="2.5" stroke-linecap="round" />
+</svg>
