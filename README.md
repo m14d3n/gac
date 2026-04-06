@@ -40,6 +40,30 @@ Create a production build:
 npm run build
 ```
 
+Preview the production build locally:
+
+```bash
+npm run preview
+```
+
+## GitHub Pages Deployment
+
+This project is configured to publish to:
+
+```text
+https://m14d3n.github.io/gac/
+```
+
+The Vite base path is set to `/gac/`, so built assets resolve correctly when the app is served from the repository subpath on GitHub Pages.
+
+Deploy the current state of the app to the `gh-pages` branch:
+
+```bash
+npm run deploy
+```
+
+If GitHub Pages is not already configured for the repository, set the Pages source to the `gh-pages` branch in the repository settings after the first deploy.
+
 ## License
 
 This project is free and open source.
